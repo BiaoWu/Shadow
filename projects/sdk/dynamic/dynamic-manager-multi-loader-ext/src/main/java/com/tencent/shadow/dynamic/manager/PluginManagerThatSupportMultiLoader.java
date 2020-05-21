@@ -2,19 +2,20 @@ package com.tencent.shadow.dynamic.manager;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.os.DeadObjectException;
 import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.dynamic.host.FailedException;
-import com.tencent.shadow.dynamic.host.PluginManagerImpl;
-import com.tencent.shadow.dynamic.host.PpsStatus;
 import com.tencent.shadow.dynamic.host.MultiLoaderPluginProcessService;
 import com.tencent.shadow.dynamic.host.MultiLoaderPpsController;
+import com.tencent.shadow.dynamic.host.PluginManagerImpl;
+import com.tencent.shadow.dynamic.host.PpsStatus;
+import com.tencent.shadow.dynamic.host.SingleLoaderPpsController;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
+import java.util.HashMap;
 
 abstract public class PluginManagerThatSupportMultiLoader extends BaseDynamicPluginManager implements PluginManagerImpl {
     private static final Logger mLogger = LoggerFactory.getLogger(PluginManagerThatUseDynamicLoader.class);
@@ -24,79 +25,78 @@ abstract public class PluginManagerThatSupportMultiLoader extends BaseDynamicPlu
      */
     protected MultiLoaderPpsController mPpsController;
 
-    /**
-     * 插件加载服务端接口
-     */
-    protected PluginLoader mPluginLoader;
+    private HashMap<String, SingleLoaderPpsController> mPpsHashMap = new HashMap<>();
+    private HashMap<String, PluginLoader> mPluginLoaderHashMap = new HashMap<>();
 
     public PluginManagerThatSupportMultiLoader(Context context) {
         super(context);
     }
 
-    /**
-     * 多Loader的PPS，需要hack多个RuntimeContainer，因此需要使用pluginKey来作为插件业务的身份标识
-     * Note：一个插件包有一份loader、一份runtime、多个pluginPart，该key与插件包一一对应
-     */
-    public abstract String getPluginKey();
-
     @Override
     protected void onPluginServiceConnected(ComponentName name, IBinder service) {
         mPpsController = MultiLoaderPluginProcessService.wrapBinder(service);
-        try {
-            mPpsController.setUuidManagerForPlugin(getPluginKey(), new UuidManagerBinder(PluginManagerThatSupportMultiLoader.this));
-        } catch (DeadObjectException e) {
-            if (mLogger.isErrorEnabled()) {
-                mLogger.error("onServiceConnected RemoteException:" + e);
-            }
-        } catch (RemoteException e) {
-            if (e.getClass().getSimpleName().equals("TransactionTooLargeException")) {
-                if (mLogger.isErrorEnabled()) {
-                    mLogger.error("onServiceConnected TransactionTooLargeException:" + e);
-                }
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
-
-        try {
-            IBinder iBinder = mPpsController.getPluginLoaderForPlugin(getPluginKey());
-            if (iBinder != null) {
-                mPluginLoader = new BinderPluginLoader(iBinder);
-            }
-        } catch (RemoteException ignored) {
-            if (mLogger.isErrorEnabled()) {
-                mLogger.error("onServiceConnected mPpsController getPluginLoader:", ignored);
-            }
-        }
     }
 
     @Override
     protected void onPluginServiceDisconnected(ComponentName name) {
         mPpsController = null;
-        mPluginLoader = null;
+        mPpsHashMap.clear();
+    }
+
+    private final SingleLoaderPpsController getSingleLoaderPps(String uuid) throws RemoteException {
+        SingleLoaderPpsController ppsController = mPpsHashMap.get(uuid);
+        if (ppsController == null) {
+            IBinder pps = mPpsController.getSingleLoaderPps(uuid);
+            ppsController = new SingleLoaderPpsController(pps);
+            PpsStatus ppsStatus = ppsController.getPpsStatus();
+            if (!ppsStatus.uuidManagerSet) {
+                ppsController.setUuidManager(new UuidManagerBinder(PluginManagerThatSupportMultiLoader.this));
+            }
+            mPpsHashMap.put(uuid, ppsController);
+        }
+        return ppsController;
     }
 
     public final void loadRunTime(String uuid) throws RemoteException, FailedException {
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("loadRunTime mPpsController:" + mPpsController);
+            mLogger.info("loadRunTime mPpsController={} for uuid={}", mPpsController, uuid);
         }
-        PpsStatus ppsStatus = mPpsController.getPpsStatusForPlugin(getPluginKey());
+
+        SingleLoaderPpsController ppsController = getSingleLoaderPps(uuid);
+        PpsStatus ppsStatus = ppsController.getPpsStatus();
         if (!ppsStatus.runtimeLoaded) {
-            mPpsController.loadRuntimeForPlugin(getPluginKey(), uuid);
+            ppsController.loadRuntime(uuid);
         }
+    }
+
+    public final PluginLoader fetchPluginLoader(String uuid) throws RemoteException, FailedException {
+        PluginLoader pluginLoader = mPluginLoaderHashMap.get(uuid);
+        if (pluginLoader == null) {
+            SingleLoaderPpsController ppsController = getSingleLoaderPps(uuid);
+            PpsStatus ppsStatus = ppsController.getPpsStatus();
+            if (!ppsStatus.loaderLoaded) {
+                ppsController.loadPluginLoader(uuid);
+            }
+            pluginLoader = new BinderPluginLoader(ppsController.getPluginLoader());
+            mPluginLoaderHashMap.put(uuid, pluginLoader);
+        }
+        return pluginLoader;
     }
 
     public final void loadPluginLoader(String uuid) throws RemoteException, FailedException {
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("loadPluginLoader mPluginLoader:" + mPluginLoader);
+            mLogger.info("loadRunTime mPpsController:" + mPpsController);
         }
-        if (mPluginLoader == null) {
-            PpsStatus ppsStatus = mPpsController.getPpsStatusForPlugin(getPluginKey());
+
+        PluginLoader pluginLoader = mPluginLoaderHashMap.get(uuid);
+        if (pluginLoader == null) {
+            SingleLoaderPpsController ppsController = getSingleLoaderPps(uuid);
+            PpsStatus ppsStatus = ppsController.getPpsStatus();
             if (!ppsStatus.loaderLoaded) {
-                mPpsController.loadPluginLoaderForPlugin(getPluginKey(), uuid);
+                ppsController.loadPluginLoader(uuid);
             }
-            IBinder iBinder = mPpsController.getPluginLoaderForPlugin(getPluginKey());
-            mPluginLoader = new BinderPluginLoader(iBinder);
+            pluginLoader = new BinderPluginLoader(ppsController.getPluginLoader());
+            mPluginLoaderHashMap.put(uuid, pluginLoader);
         }
     }
 }
