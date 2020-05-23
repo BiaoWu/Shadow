@@ -22,6 +22,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.os.Build;
+import android.os.Debug;
 import android.os.StrictMode;
 import android.webkit.WebView;
 
@@ -44,6 +45,8 @@ public class HostApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sApp = this;
+
+//        Debug.waitForDebugger();
 
         detectNonSdkApiUsageOnAndroidP();
         setWebViewDataDirectorySuffix();

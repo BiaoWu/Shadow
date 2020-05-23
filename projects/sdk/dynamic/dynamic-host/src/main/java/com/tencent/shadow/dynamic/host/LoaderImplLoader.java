@@ -41,11 +41,12 @@ final class LoaderImplLoader extends ImplLoader {
     PluginLoaderImpl load(InstalledApk installedApk, String uuid, Context appContext) throws Exception {
         ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
                 installedApk,
-                LoaderImplLoader.class.getClassLoader(),
                 loadWhiteList(installedApk),
-                1
+                ProcessClassLoader.getInstance()
         );
-        LoaderFactory loaderFactory = pluginLoaderClassLoader.getInterface(
+        ProcessClassLoader.addClassLoader(pluginLoaderClassLoader);
+
+        LoaderFactory loaderFactory = ProcessClassLoader.getInstance().getInterface(
                 LoaderFactory.class,
                 sLoaderFactoryImplClassName
         );

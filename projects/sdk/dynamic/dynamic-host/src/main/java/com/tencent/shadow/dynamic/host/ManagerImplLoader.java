@@ -45,9 +45,8 @@ final class ManagerImplLoader extends ImplLoader {
     PluginManagerImpl load() {
         ApkClassLoader apkClassLoader = new ApkClassLoader(
                 installedApk,
-                getClass().getClassLoader(),
                 loadWhiteList(installedApk),
-                1
+                ProcessClassLoader.getInstance()
         );
 
         Context pluginManagerContext = new ChangeApkContextWrapper(
@@ -57,7 +56,7 @@ final class ManagerImplLoader extends ImplLoader {
         );
 
         try {
-            ManagerFactory managerFactory = apkClassLoader.getInterface(
+            ManagerFactory managerFactory = ProcessClassLoader.getInstance().getInterface(
                     ManagerFactory.class,
                     MANAGER_FACTORY_CLASS_NAME
             );

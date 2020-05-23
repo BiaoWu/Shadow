@@ -50,6 +50,13 @@ class ApkClassLoader extends DexClassLoader {
         this.mInterfacePackageNames = mInterfacePackageNames;
     }
 
+    ApkClassLoader(InstalledApk installedApk, String[] mInterfacePackageNames, ClassLoader parent) {
+        super(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath, null);
+        this.mInterfacePackageNames = mInterfacePackageNames;
+        this.mGrandParent = parent;
+    }
+
+
     @Override
     protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
         String packageName;
@@ -61,15 +68,17 @@ class ApkClassLoader extends DexClassLoader {
         }
 
         boolean isInterface = false;
-        for (String interfacePackageName : mInterfacePackageNames) {
-            if (packageName.equals(interfacePackageName)) {
-                isInterface = true;
-                break;
+        if (mInterfacePackageNames != null) {
+            for (String interfacePackageName : mInterfacePackageNames) {
+                if (packageName.equals(interfacePackageName)) {
+                    isInterface = true;
+                    break;
+                }
             }
         }
 
         if (isInterface) {
-            return super.loadClass(className, resolve);
+            return mGrandParent.loadClass(className);
         } else {
             Class<?> clazz = findLoadedClass(className);
 
@@ -81,14 +90,16 @@ class ApkClassLoader extends DexClassLoader {
                     suppressed = e;
                 }
 
-                if (clazz == null) {
-                    try {
-                        clazz = mGrandParent.loadClass(className);
-                    } catch (ClassNotFoundException e) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            e.addSuppressed(suppressed);
+                if (mGrandParent != null) {
+                    if (clazz == null) {
+                        try {
+                            clazz = mGrandParent.loadClass(className);
+                        } catch (ClassNotFoundException e) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                e.addSuppressed(suppressed);
+                            }
+                            throw e;
                         }
-                        throw e;
                     }
                 }
             }

@@ -52,6 +52,8 @@ public class PluginProcessService extends BasePluginProcessService {
 
     @Override
     public IBinder onBind(Intent intent) {
+
+
         if (mLogger.isInfoEnabled()) {
             mLogger.info("onBind:" + this);
         }
@@ -103,11 +105,19 @@ public class PluginProcessService extends BasePluginProcessService {
                 throw new FailedException(ERROR_CODE_FILE_NOT_FOUND_EXCEPTION, "uuid==" + uuid + "的Runtime没有找到。cause:" + e.getMessage());
             }
 
-            InstalledApk installedRuntimeApk = new InstalledApk(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath);
-            boolean loaded = DynamicRuntime.loadRuntime(installedRuntimeApk);
-            if (loaded) {
-                DynamicRuntime.saveLastRuntimeInfo(this, installedRuntimeApk);
-            }
+            ApkClassLoader runtimeClassLoader = new ApkClassLoader(
+                    installedApk,
+                    null,
+                    ProcessClassLoader.getInstance()
+            );
+
+            ProcessClassLoader.addClassLoader(runtimeClassLoader);
+
+//            InstalledApk installedRuntimeApk = new InstalledApk(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath);
+//            boolean loaded = DynamicRuntime.loadRuntime(installedRuntimeApk);
+//            if (loaded) {
+//                DynamicRuntime.saveLastRuntimeInfo(this, installedRuntimeApk);
+//            }
             mRuntimeLoaded = true;
         } catch (RuntimeException e) {
             if (mLogger.isErrorEnabled()) {
