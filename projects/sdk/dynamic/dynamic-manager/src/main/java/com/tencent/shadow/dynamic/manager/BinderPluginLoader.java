@@ -215,4 +215,9 @@ class BinderPluginLoader implements PluginLoader {
             _data.recycle();
         }
     }
+
+    @Override
+    public IBinder asBinder() {
+        return mRemote;
+    }
 }

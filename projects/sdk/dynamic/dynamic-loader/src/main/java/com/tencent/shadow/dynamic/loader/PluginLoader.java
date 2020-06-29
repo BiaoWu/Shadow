@@ -25,11 +25,12 @@ package com.tencent.shadow.dynamic.loader;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.IInterface;
 import android.os.RemoteException;
 
 import java.util.Map;
 
-public interface PluginLoader {
+public interface PluginLoader extends IInterface {
     String DESCRIPTOR = PluginLoader.class.getName();
     int TRANSACTION_loadPlugin = (IBinder.FIRST_CALL_TRANSACTION);
     int TRANSACTION_getLoadedPlugin = (IBinder.FIRST_CALL_TRANSACTION + 1);
