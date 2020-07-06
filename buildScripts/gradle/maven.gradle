@@ -390,6 +390,8 @@ publishing {
     }
 }
 
+apply plugin: 'digital.wup.android-maven-publish'
+
 setGeneratePomFileAndDepends('gradlePlugin')
 setGeneratePomFileAndDepends('common')
 setGeneratePomFileAndDepends('loadParameters')
