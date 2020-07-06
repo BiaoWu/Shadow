@@ -2,7 +2,7 @@ apply plugin: 'java-gradle-plugin'
 
 apply plugin: 'kotlin'
 
-group 'com.tencent.shadow.core'
+group 'com.github.biaowu.shadow.core'
 
 gradlePlugin {
     plugins {

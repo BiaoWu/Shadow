@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-group 'com.tencent.shadow.core'
+group 'com.github.biaowu.shadow.core'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -48,7 +48,7 @@ dependencies {
     compileOnly project(':activity-container')
     compileOnly project(':common')
     api project(':load-parameters')
-    implementation 'com.tencent.shadow.coding:lint'
+    implementation 'com.github.biaowu.shadow.coding:lint'
 }
 
 def jarPackage(buildType) {

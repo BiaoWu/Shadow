@@ -1,6 +1,6 @@
 apply plugin: 'java-library'
 
-group 'com.tencent.shadow.dynamic'
+group 'com.github.biaowu.shadow.dynamic'
 
 dependencies {
     api files("${project(":dynamic-host").getBuildDir()}/outputs/jar/dynamic-host-debug.jar")

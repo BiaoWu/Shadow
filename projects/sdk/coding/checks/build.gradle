@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 
-group 'com.tencent.shadow.coding'
+group 'com.github.biaowu.shadow.coding'
 
 /*
 Lint Version

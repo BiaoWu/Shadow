@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 
-group 'com.tencent.shadow.coding'
+group 'com.github.biaowu.shadow.coding'
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

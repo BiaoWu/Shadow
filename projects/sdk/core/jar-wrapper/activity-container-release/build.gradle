@@ -1,6 +1,6 @@
 apply plugin: 'java-library'
 
-group 'com.tencent.shadow.core'
+group 'com.github.biaowu.shadow.core'
 
 dependencies {
     api files("${project(":activity-container").getBuildDir()}/outputs/jar/activity-container-release.jar")

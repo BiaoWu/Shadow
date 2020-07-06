@@ -42,10 +42,10 @@ dependencies {
     implementation 'commons-io:commons-io:2.5'//example复制apk用的.
     implementation 'org.slf4j:slf4j-api:1.7.25'
 
-    implementation 'com.tencent.shadow.core:common'
+    implementation 'com.github.biaowu.shadow.core:common'
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.tencent.shadow.core:loader'
-    implementation 'com.tencent.shadow.core:activity-container'
+    implementation 'com.github.biaowu.shadow.core:loader'
+    implementation 'com.github.biaowu.shadow.core:activity-container'
     implementation project(':custom-view')
 }
 

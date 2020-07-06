@@ -26,6 +26,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.tencent.shadow.core:activity-container'
+    implementation 'com.github.biaowu.shadow.core:activity-container'
 }
 

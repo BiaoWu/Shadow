@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 
-group 'com.tencent.shadow.dynamic'
+group 'com.github.biaowu.shadow.dynamic'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -23,10 +23,10 @@ android {
 }
 
 dependencies {
-    implementation 'com.tencent.shadow.coding:lint'
-    implementation 'com.tencent.shadow.core:manager'
+    implementation 'com.github.biaowu.shadow.coding:lint'
+    implementation 'com.github.biaowu.shadow.core:manager'
     implementation project(':dynamic-manager')
     implementation project(':dynamic-loader')
-    compileOnly 'com.tencent.shadow.core:common'
+    compileOnly 'com.github.biaowu.shadow.core:common'
     compileOnly project(':dynamic-host-multi-loader-ext')
 }

@@ -9,7 +9,7 @@ android {
 dependencies {
     //Shadow Transform后业务代码会有一部分实际引用runtime中的类
     //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
-    compileOnly 'com.tencent.shadow.core:runtime-debug'
+    compileOnly 'com.github.biaowu.shadow.core:runtime-debug'
 }
 
 buildscript {
@@ -19,9 +19,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.tencent.shadow.core:runtime-debug'
-        classpath 'com.tencent.shadow.core:activity-container-debug'
-        classpath 'com.tencent.shadow.core:gradle-plugin'
+        classpath 'com.github.biaowu.shadow.core:runtime-debug'
+        classpath 'com.github.biaowu.shadow.core:activity-container-debug'
+        classpath 'com.github.biaowu.shadow.core:gradle-plugin'
         classpath 'org.javassist:javassist:3.22.0-GA'
     }
 }

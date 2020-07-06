@@ -26,16 +26,16 @@ android {
 }
 
 dependencies {
-    implementation 'com.tencent.shadow.core:loader'
-    implementation 'com.tencent.shadow.dynamic:dynamic-loader'
-    implementation 'com.tencent.shadow.dynamic:dynamic-loader-impl'
+    implementation 'com.github.biaowu.shadow.core:loader'
+    implementation 'com.github.biaowu.shadow.dynamic:dynamic-loader'
+    implementation 'com.github.biaowu.shadow.dynamic:dynamic-loader-impl'
     implementation project(':sample-constant')
 
-    compileOnly 'com.tencent.shadow.core:runtime-debug'
-    compileOnly 'com.tencent.shadow.core:activity-container-debug'
-    compileOnly 'com.tencent.shadow.core:common-debug'
+    compileOnly 'com.github.biaowu.shadow.core:runtime-debug'
+    compileOnly 'com.github.biaowu.shadow.core:activity-container-debug'
+    compileOnly 'com.github.biaowu.shadow.core:common-debug'
     //下面这行依赖是为了防止在proguard的时候找不到LoaderFactory接口
-    compileOnly 'com.tencent.shadow.dynamic:dynamic-host-debug'
+    compileOnly 'com.github.biaowu.shadow.dynamic:dynamic-host-debug'
 
     compileOnly files("${project(":sample-host-lib").getBuildDir()}/outputs/jar/sample-host-lib-debug.jar")
 }

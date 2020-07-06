@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-group 'com.tencent.shadow.dynamic'
+group 'com.github.biaowu.shadow.dynamic'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -42,10 +42,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.12'
 
-    implementation 'com.tencent.shadow.core:loader'
-    compileOnly 'com.tencent.shadow.core:activity-container'
-    implementation 'com.tencent.shadow.coding:lint'
-    compileOnly 'com.tencent.shadow.core:common'
+    implementation 'com.github.biaowu.shadow.core:loader'
+    compileOnly 'com.github.biaowu.shadow.core:activity-container'
+    implementation 'com.github.biaowu.shadow.coding:lint'
+    compileOnly 'com.github.biaowu.shadow.core:common'
     compileOnly project(':dynamic-host')
     compileOnly project(':dynamic-loader')
 }

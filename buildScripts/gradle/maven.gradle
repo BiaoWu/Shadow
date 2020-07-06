@@ -406,3 +406,11 @@ setGeneratePomFileAndDepends('dynamicLoader')
 setGeneratePomFileAndDepends('dynamicLoaderImpl')
 setGeneratePomFileAndDepends('dynamicManager')
 setGeneratePomFileAndDepends('dynamicManagerMultiLoaderExt')
+
+def installTask() {
+    return tasks.create("install") {
+        dependsOn gradle.includedBuild('core').task(':activity-container:install')
+    }
+}
+
+tasks.add(installTask())

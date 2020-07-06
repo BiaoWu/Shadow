@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 
-group 'com.tencent.shadow.core'
+group 'com.github.biaowu.shadow.core'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -20,6 +20,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.tencent.shadow.coding:lint'
+    implementation 'com.github.biaowu.shadow.coding:lint'
 }
 
